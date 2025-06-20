@@ -93,7 +93,8 @@ export class TreeNode implements NodeWrapper {
             child.type === 'rest_pattern' ||
             child.type === 'assignment_pattern' ||
             child.type === 'object_pattern' ||
-            child.type === 'array_pattern'
+            child.type === 'array_pattern' ||
+            child.type === 'required_parameter'
           ) {
             parameters.push(child.text);
           }
@@ -108,7 +109,8 @@ export class TreeNode implements NodeWrapper {
                 param.type === 'rest_pattern' ||
                 param.type === 'assignment_pattern' ||
                 param.type === 'object_pattern' ||
-                param.type === 'array_pattern'
+                param.type === 'array_pattern' ||
+                param.type === 'required_parameter'
               ) {
                 parameters.push(param.text);
               }
