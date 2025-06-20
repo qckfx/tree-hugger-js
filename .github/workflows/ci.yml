@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run type check
+      run: npm run build
+      
+    - name: Run tests
+      run: npm test
+      
+    - name: Run tests with coverage
+      run: npm test -- --coverage --watchAll=false
+      
+    - name: Upload coverage to Codecov
+      if: matrix.node-version == '20.x'
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage/lcov.info
+        fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check if lint script exists
+      id: check-lint
+      run: |
+        if npm run | grep -q "lint"; then
+          echo "lint_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "lint_exists=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Run linter
+      if: steps.check-lint.outputs.lint_exists == 'true'
+      run: npm run lint
+      
+    - name: Skip linting (no lint script found)
+      if: steps.check-lint.outputs.lint_exists == 'false'
+      run: echo "No lint script found in package.json, skipping linting"

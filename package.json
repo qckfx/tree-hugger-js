@@ -1,0 +1,56 @@
+{
+  "name": "tree-hugger-js",
+  "version": "0.1.0",
+  "description": "A friendly tree-sitter wrapper for JavaScript and TypeScript",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "directories": {
+    "example": "examples",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "example": "npm run build && node -r ts-node/register",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "lint": "eslint src tests --ext .ts,.js --ignore-pattern '**/fixtures/**'",
+    "lint:fix": "eslint src tests --ext .ts,.js --ignore-pattern '**/fixtures/**' --fix",
+    "format": "prettier --write \"src/**/*.{ts,js}\" \"tests/**/*.{ts,js}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js}\" \"tests/**/*.{ts,js}\""
+  },
+  "keywords": [
+    "tree-sitter",
+    "ast",
+    "parser",
+    "code-analysis",
+    "syntax-tree"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "@typescript-eslint/eslint-plugin-tslint": "^7.0.2",
+    "@typescript-eslint/parser": "^8.34.1",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-jest": "^29.0.1",
+    "eslint-plugin-prettier": "^5.5.0",
+    "jest": "^30.0.2",
+    "prettier": "^3.5.3",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "tree-sitter": "^0.21.1",
+    "tree-sitter-javascript": "^0.21.4",
+    "tree-sitter-typescript": "^0.21.2"
+  }
+}
