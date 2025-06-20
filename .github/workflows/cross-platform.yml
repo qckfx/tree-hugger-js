@@ -44,7 +44,7 @@ jobs:
       run: npm run build
       
     - name: Run tests
-      run: npm test -- --config=jest.config.ci.js
+      run: npm run test:ci
       env:
         # Additional stability for Windows and Node.js native modules
         NODE_OPTIONS: "--max-old-space-size=4096"

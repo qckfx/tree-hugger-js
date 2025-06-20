@@ -12,6 +12,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "jest",
+    "test:ci": "jest --config=jest.config.ci.js",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "example": "npm run build && node -r ts-node/register",
