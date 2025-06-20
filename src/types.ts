@@ -71,7 +71,7 @@ export interface NodeInfo {
 }
 
 export interface TransformOperation {
-  type: "rename" | "removeUnusedImports" | "replaceIn" | "insertBefore" | "insertAfter";
+  type: 'rename' | 'removeUnusedImports' | 'replaceIn' | 'insertBefore' | 'insertAfter';
   parameters: {
     oldName?: string;
     newName?: string;
