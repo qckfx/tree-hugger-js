@@ -37,8 +37,11 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
+    - name: Rebuild native modules for current Node.js version
+      run: npm rebuild
+      
     - name: Build project
       run: npm run build
       
     - name: Run tests
-      run: npm test
+      run: npm test -- --config=jest.config.ci.js

@@ -88,5 +88,23 @@ module.exports = {
         'no-console': 'off',
       },
     },
+    {
+      // Special handling for tree-sitter-stable.js helper file
+      files: ['**/helpers/tree-sitter-stable.js'],
+      extends: ['eslint:recommended'],
+      parser: 'espree',
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'script',
+      },
+      env: {
+        node: true,
+      },
+      rules: {
+        'no-console': 'off',
+        '@typescript-eslint/prefer-optional-chain': 'off',
+        '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      },
+    },
   ],
 };

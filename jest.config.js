@@ -21,5 +21,9 @@ module.exports = {
     }]
   },
   clearMocks: true,
-  testTimeout: 10000
+  testTimeout: 15000, // Increased timeout for tree-sitter operations
+  // Configuration to mitigate tree-sitter race condition in CI environments
+  // Based on tree-sitter/node-tree-sitter#181
+  maxWorkers: process.env.CI ? 1 : '50%', // Serial in CI, parallel locally
+  setupFilesAfterEnv: ['<rootDir>/tests/helpers/setup.ts']
 };

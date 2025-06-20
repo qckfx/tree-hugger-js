@@ -36,13 +36,50 @@ export class TreeHugger {
       // Don't throw on syntax errors - tree-sitter can handle partial parsing
       // Users can check tree.root.hasError if they want to know about errors
 
-      this.root = new TreeNode(this.tree.rootNode, sourceCode);
+      // Robust rootNode initialization with retry mechanism for CI environments
+      const rootNode = this.getRootNodeWithRetry(this.tree, 3);
+      this.root = new TreeNode(rootNode, sourceCode);
     } catch (error) {
       if (error instanceof ParseError || error instanceof LanguageError) throw error;
       throw new ParseError(
         `Failed to parse: ${error instanceof Error ? error.message : String(error)}`
       );
     }
+  }
+
+  /**
+   * Robust rootNode getter with retry mechanism to handle race conditions in CI environments
+   * Addresses the known issue where tree.rootNode can be undefined in concurrent testing scenarios
+   */
+  private getRootNodeWithRetry(tree: Parser.Tree, maxRetries: number = 3): Parser.SyntaxNode {
+    let attempts = 0;
+
+    while (attempts < maxRetries) {
+      const rootNode = tree.rootNode;
+
+      if (typeof rootNode?.type !== 'undefined') {
+        return rootNode;
+      }
+
+      attempts++;
+
+      if (attempts < maxRetries) {
+        // Short delay to allow native binding to stabilize
+        // This addresses the race condition documented in tree-sitter/node-tree-sitter#181
+        const delay = Math.min(10 * attempts, 50); // Progressive delay: 10ms, 20ms, 50ms
+
+        // Use synchronous delay to avoid async complications in constructor
+        const start = Date.now();
+        while (Date.now() - start < delay) {
+          // Busy wait for very short delays
+        }
+      }
+    }
+
+    throw new ParseError(
+      `Failed to get valid rootNode after ${maxRetries} attempts. This is likely caused by a race condition in tree-sitter native bindings. ` +
+        'Consider running tests serially or using a Jest moduleNameMapper workaround for tree-sitter.'
+    );
   }
 
   private findFirstError(node: Parser.SyntaxNode): Parser.SyntaxNode | null {

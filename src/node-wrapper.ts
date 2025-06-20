@@ -2,6 +2,7 @@ import { SyntaxNode } from 'tree-sitter';
 import { NodeWrapper, NodePredicate } from './types';
 import { PatternParser } from './pattern-parser';
 import { visit, Visitor, VisitorFunction } from './visitor';
+import { ParseError } from './errors';
 
 export class TreeNode implements NodeWrapper {
   private _children?: TreeNode[];
@@ -10,7 +11,21 @@ export class TreeNode implements NodeWrapper {
     public node: SyntaxNode,
     public sourceCode: string,
     public parent?: TreeNode
-  ) {}
+  ) {
+    // Defensive check for undefined node - addresses tree-sitter race condition in CI environments
+    if (!node) {
+      throw new ParseError(
+        'TreeNode constructor received undefined SyntaxNode. This may be caused by a race condition in tree-sitter native bindings, commonly seen in CI environments with concurrent test execution.'
+      );
+    }
+
+    // Validate that the node has required properties
+    if (typeof node.type === 'undefined') {
+      throw new ParseError(
+        'TreeNode constructor received invalid SyntaxNode - missing type property. This indicates a problem with tree-sitter native binding initialization.'
+      );
+    }
+  }
 
   get text(): string {
     return this.sourceCode.slice(this.node.startIndex, this.node.endIndex);
