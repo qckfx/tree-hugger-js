@@ -23,6 +23,7 @@ export interface NodeWrapper {
   name?: string;
   line: number;
   column: number;
+  endLine: number;
   hasError: boolean;
 }
 
@@ -42,6 +43,7 @@ export interface FunctionInfo {
   startLine: number;
   endLine: number;
   text: string;
+  bodyRange?: { startLine: number; endLine: number };
 }
 
 export interface ClassInfo {
@@ -51,6 +53,7 @@ export interface ClassInfo {
   startLine: number;
   endLine: number;
   text: string;
+  bodyRange?: { startLine: number; endLine: number };
 }
 
 export interface ImportInfo {

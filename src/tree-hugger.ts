@@ -1,6 +1,6 @@
 import Parser from 'tree-sitter';
 import { readFileSync } from 'fs';
-import { TreeHuggerOptions } from './types';
+import { TreeHuggerOptions, FunctionInfo, ClassInfo } from './types';
 import { detectLanguage, getLanguageByName } from './languages';
 import { TreeNode } from './node-wrapper';
 import { Transform } from './transform';
@@ -152,6 +152,54 @@ export class TreeHugger {
   // Find node at position
   nodeAt(line: number, column: number): TreeNode | null {
     return this.root.nodeAt(line, column);
+  }
+
+  // Enhanced analysis methods that return structured data
+  /**
+   * Get detailed function information with parameters and body ranges
+   */
+  getFunctionDetails(): FunctionInfo[] {
+    const functions = this.functions();
+    return functions.map(fn => ({
+      name: fn.name || null,
+      type: fn.type,
+      async: fn.isAsync(),
+      parameters: fn.extractParameters(),
+      startLine: fn.line,
+      endLine: fn.endLine,
+      text: fn.text,
+      bodyRange: fn.getBodyRange() || undefined
+    }));
+  }
+
+  /**
+   * Get detailed class information with methods and body ranges
+   */
+  getClassDetails(): ClassInfo[] {
+    const classes = this.classes();
+    return classes.map(cls => {
+      const methods = cls.findAll('method_definition');
+      const methodDetails = methods.map(method => ({
+        name: method.name || null,
+        type: method.type,
+        async: method.isAsync(),
+        parameters: method.extractParameters(),
+        startLine: method.line,
+        endLine: method.endLine,
+        text: method.text,
+        bodyRange: method.getBodyRange() || undefined
+      }));
+
+      return {
+        name: cls.name || null,
+        methods: methodDetails,
+        properties: cls.findAll('field_definition').map(prop => prop.name || 'unknown'),
+        startLine: cls.line,
+        endLine: cls.endLine,
+        text: cls.text,
+        bodyRange: cls.getBodyRange() || undefined
+      };
+    });
   }
 
   // Transform API

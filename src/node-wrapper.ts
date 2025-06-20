@@ -56,6 +56,10 @@ export class TreeNode implements NodeWrapper {
     return this.startPosition.column + 1;
   }
 
+  get endLine(): number {
+    return this.endPosition.row + 1;
+  }
+
   get hasError(): boolean {
     return this.node.hasError;
   }
@@ -63,6 +67,83 @@ export class TreeNode implements NodeWrapper {
   get name(): string | undefined {
     const nameNode = this.node.childForFieldName('name');
     return nameNode ? this.sourceCode.slice(nameNode.startIndex, nameNode.endIndex) : undefined;
+  }
+
+  /**
+   * Extract parameters from function-like nodes (functions, methods, arrow functions)
+   */
+  extractParameters(): string[] {
+    const parameters: string[] = [];
+    
+    // Handle different function types
+    if (this.type === 'function_declaration' || this.type === 'function_expression' || 
+        this.type === 'method_definition' || this.type === 'arrow_function') {
+      
+      const paramsNode = this.node.childForFieldName('parameters');
+      if (paramsNode) {
+        const paramsWrapper = new TreeNode(paramsNode, this.sourceCode, this);
+        
+        // Extract formal parameters - look directly in the formal_parameters node
+        for (const child of paramsWrapper.children) {
+          if (child.type === 'identifier' || child.type === 'rest_pattern' || 
+              child.type === 'assignment_pattern' || child.type === 'object_pattern' ||
+              child.type === 'array_pattern') {
+            parameters.push(child.text);
+          }
+        }
+      } else {
+        // For some function types, look for formal_parameters as direct child
+        for (const child of this.children) {
+          if (child.type === 'formal_parameters') {
+            for (const param of child.children) {
+              if (param.type === 'identifier' || param.type === 'rest_pattern' || 
+                  param.type === 'assignment_pattern' || param.type === 'object_pattern' ||
+                  param.type === 'array_pattern') {
+                parameters.push(param.text);
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    return parameters;
+  }
+
+  /**
+   * Check if this function-like node is async
+   */
+  isAsync(): boolean {
+    if (this.type === 'function_declaration' || this.type === 'function_expression' || 
+        this.type === 'method_definition' || this.type === 'arrow_function') {
+      
+      // Check for async modifier
+      for (const child of this.children) {
+        if (child.type === 'async' || child.text === 'async') {
+          return true;
+        }
+      }
+      
+      // Also check the text content as fallback
+      return this.text.includes('async');
+    }
+    
+    return false;
+  }
+
+  /**
+   * Get the body range of a function or class
+   */
+  getBodyRange(): { startLine: number; endLine: number } | null {
+    const bodyNode = this.node.childForFieldName('body');
+    if (bodyNode) {
+      return {
+        startLine: bodyNode.startPosition.row + 1,
+        endLine: bodyNode.endPosition.row + 1
+      };
+    }
+    
+    return null;
   }
 
   // Navigation methods
