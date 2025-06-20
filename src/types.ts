@@ -36,7 +36,7 @@ export type NodeTransformer = (node: NodeWrapper) => NodeWrapper | null;
 
 // Standard data structures returned by analysis methods
 export interface FunctionInfo {
-  name: string | null;
+  name: string | undefined;
   type: string;
   async: boolean;
   parameters: string[];
@@ -47,7 +47,7 @@ export interface FunctionInfo {
 }
 
 export interface ClassInfo {
-  name: string | null;
+  name: string | undefined;
   methods: FunctionInfo[];
   properties: string[];
   startLine: number;

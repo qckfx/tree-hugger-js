@@ -161,14 +161,14 @@ export class TreeHugger {
   getFunctionDetails(): FunctionInfo[] {
     const functions = this.functions();
     return functions.map(fn => ({
-      name: fn.name || null,
+      name: fn.name,
       type: fn.type,
       async: fn.isAsync(),
       parameters: fn.extractParameters(),
       startLine: fn.line,
       endLine: fn.endLine,
       text: fn.text,
-      bodyRange: fn.getBodyRange() || undefined
+      bodyRange: fn.getBodyRange() ?? undefined,
     }));
   }
 
@@ -180,24 +180,24 @@ export class TreeHugger {
     return classes.map(cls => {
       const methods = cls.findAll('method_definition');
       const methodDetails = methods.map(method => ({
-        name: method.name || null,
+        name: method.name,
         type: method.type,
         async: method.isAsync(),
         parameters: method.extractParameters(),
         startLine: method.line,
         endLine: method.endLine,
         text: method.text,
-        bodyRange: method.getBodyRange() || undefined
+        bodyRange: method.getBodyRange() ?? undefined,
       }));
 
       return {
-        name: cls.name || null,
+        name: cls.name,
         methods: methodDetails,
-        properties: cls.findAll('field_definition').map(prop => prop.name || 'unknown'),
+        properties: cls.findAll('field_definition').map(prop => prop.name ?? 'unknown'),
         startLine: cls.line,
         endLine: cls.endLine,
         text: cls.text,
-        bodyRange: cls.getBodyRange() || undefined
+        bodyRange: cls.getBodyRange() ?? undefined,
       };
     });
   }

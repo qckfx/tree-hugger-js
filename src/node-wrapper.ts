@@ -74,20 +74,27 @@ export class TreeNode implements NodeWrapper {
    */
   extractParameters(): string[] {
     const parameters: string[] = [];
-    
+
     // Handle different function types
-    if (this.type === 'function_declaration' || this.type === 'function_expression' || 
-        this.type === 'method_definition' || this.type === 'arrow_function') {
-      
+    if (
+      this.type === 'function_declaration' ||
+      this.type === 'function_expression' ||
+      this.type === 'method_definition' ||
+      this.type === 'arrow_function'
+    ) {
       const paramsNode = this.node.childForFieldName('parameters');
       if (paramsNode) {
         const paramsWrapper = new TreeNode(paramsNode, this.sourceCode, this);
-        
+
         // Extract formal parameters - look directly in the formal_parameters node
         for (const child of paramsWrapper.children) {
-          if (child.type === 'identifier' || child.type === 'rest_pattern' || 
-              child.type === 'assignment_pattern' || child.type === 'object_pattern' ||
-              child.type === 'array_pattern') {
+          if (
+            child.type === 'identifier' ||
+            child.type === 'rest_pattern' ||
+            child.type === 'assignment_pattern' ||
+            child.type === 'object_pattern' ||
+            child.type === 'array_pattern'
+          ) {
             parameters.push(child.text);
           }
         }
@@ -96,9 +103,13 @@ export class TreeNode implements NodeWrapper {
         for (const child of this.children) {
           if (child.type === 'formal_parameters') {
             for (const param of child.children) {
-              if (param.type === 'identifier' || param.type === 'rest_pattern' || 
-                  param.type === 'assignment_pattern' || param.type === 'object_pattern' ||
-                  param.type === 'array_pattern') {
+              if (
+                param.type === 'identifier' ||
+                param.type === 'rest_pattern' ||
+                param.type === 'assignment_pattern' ||
+                param.type === 'object_pattern' ||
+                param.type === 'array_pattern'
+              ) {
                 parameters.push(param.text);
               }
             }
@@ -106,7 +117,7 @@ export class TreeNode implements NodeWrapper {
         }
       }
     }
-    
+
     return parameters;
   }
 
@@ -114,20 +125,23 @@ export class TreeNode implements NodeWrapper {
    * Check if this function-like node is async
    */
   isAsync(): boolean {
-    if (this.type === 'function_declaration' || this.type === 'function_expression' || 
-        this.type === 'method_definition' || this.type === 'arrow_function') {
-      
+    if (
+      this.type === 'function_declaration' ||
+      this.type === 'function_expression' ||
+      this.type === 'method_definition' ||
+      this.type === 'arrow_function'
+    ) {
       // Check for async modifier
       for (const child of this.children) {
         if (child.type === 'async' || child.text === 'async') {
           return true;
         }
       }
-      
+
       // Also check the text content as fallback
       return this.text.includes('async');
     }
-    
+
     return false;
   }
 
@@ -139,10 +153,10 @@ export class TreeNode implements NodeWrapper {
     if (bodyNode) {
       return {
         startLine: bodyNode.startPosition.row + 1,
-        endLine: bodyNode.endPosition.row + 1
+        endLine: bodyNode.endPosition.row + 1,
       };
     }
-    
+
     return null;
   }
 
