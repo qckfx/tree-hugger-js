@@ -1,8 +1,9 @@
 name: Publish to NPM
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   publish:
@@ -32,3 +33,37 @@ jobs:
       run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        body: |
+          ## What's Changed
+          
+          See the [CHANGELOG](./CHANGELOG.md) for full details.
+          
+          ## Installation
+          
+          ```bash
+          # Try it immediately with npx
+          npx tree-hugger-js-mcp
+          
+          # Or install globally
+          npm install -g tree-hugger-js@${{ github.ref_name }}
+          ```
+          
+          ## Usage
+          
+          ```javascript
+          import { parse, TreeHugger } from 'tree-hugger-js';
+          
+          const tree = parse('./src/app.js');
+          const functions = tree.functions();
+          console.log(functions);
+          ```
+        draft: false
+        prerelease: false
