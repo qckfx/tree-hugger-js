@@ -112,13 +112,11 @@ export class TreeNode implements NodeWrapper {
 
   // Common queries
   functions(): TreeNode[] {
-    return this.findAll('function_declaration')
-      .concat(this.findAll('function_expression'))
-      .concat(this.findAll('arrow_function'));
+    return this.findAll('function');
   }
 
   classes(): TreeNode[] {
-    return this.findAll('class_declaration').concat(this.findAll('class_expression'));
+    return this.findAll('class');
   }
 
   imports(): TreeNode[] {

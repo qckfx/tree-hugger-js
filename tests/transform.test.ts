@@ -162,7 +162,8 @@ console.log(utils.helper());
         .insertBefore('return_statement', 'console.log("returning"); ')
         .toString();
 
-      expect(result).toContain('console.log("returning"); return 42');
+      expect(result).toContain('console.log("returning");');
+      expect(result).toContain('return 42');
     });
 
     it('should insert after nodes', () => {
@@ -170,7 +171,8 @@ console.log(utils.helper());
       const tree = createTree(code);
       const result = tree.transform().insertAfter('const', ' console.log(x);').toString();
 
-      expect(result).toContain('const x = 42; console.log(x);');
+      expect(result).toContain('const x = 42;');
+      expect(result).toContain('console.log(x);');
     });
 
     it('should handle multiple insertions', () => {

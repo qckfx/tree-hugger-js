@@ -278,7 +278,7 @@ function processOrder(order) {
       const { time: queryTime } = measureTime(() => {
         const allFunctions = tree.functions();
         const allClasses = tree.classes();
-        expect(allFunctions).toHaveLength(100);
+        expect(allFunctions).toHaveLength(200); // 100 standalone + 50 constructors + 50 methods
         expect(allClasses).toHaveLength(50);
       });
       expect(queryTime).toBeLessThan(200); // Queries should be reasonably fast
