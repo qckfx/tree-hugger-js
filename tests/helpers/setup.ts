@@ -27,10 +27,10 @@ beforeAll(() => {
       // Initialize parsers for all supported languages to ensure native bindings are stable
       const jsParser = new Parser();
       jsParser.setLanguage(JavaScript);
-      
+
       const tsParser = new Parser();
       tsParser.setLanguage(TypeScript);
-      
+
       const tsxParser = new Parser();
       tsxParser.setLanguage(TSX);
 
@@ -40,9 +40,14 @@ beforeAll(() => {
       const tsxTree = tsxParser.parse('const el = <div>Hello</div>;');
 
       // Verify rootNodes are accessible to catch initialization issues early
-      if (!jsTree.rootNode || typeof jsTree.rootNode.type === 'undefined' ||
-          !tsTree.rootNode || typeof tsTree.rootNode.type === 'undefined' ||
-          !tsxTree.rootNode || typeof tsxTree.rootNode.type === 'undefined') {
+      if (
+        !jsTree.rootNode ||
+        typeof jsTree.rootNode.type === 'undefined' ||
+        !tsTree.rootNode ||
+        typeof tsTree.rootNode.type === 'undefined' ||
+        !tsxTree.rootNode ||
+        typeof tsxTree.rootNode.type === 'undefined'
+      ) {
         console.warn('Warning: tree-sitter rootNode initialization issue detected during setup');
       }
 

@@ -26,11 +26,13 @@ module.exports = {
     }]
   },
   clearMocks: true,
-  testTimeout: 15000, // Increased timeout for CI environments
+  testTimeout: 30000, // Increased timeout for CI environments, especially Windows
   // Force serial execution to prevent race conditions
   maxWorkers: 1,
   // Disable test caching to prevent stale module issues
   cache: false,
+  // Additional Jest options for stability
+  maxConcurrency: 1,
   setupFilesAfterEnv: ['<rootDir>/tests/helpers/setup.ts'],
   // Additional options for stability in CI
   detectOpenHandles: true,
