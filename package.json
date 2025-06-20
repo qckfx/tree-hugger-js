@@ -18,7 +18,7 @@
     "example": "npm run build && node -r ts-node/register",
     "clean": "rm -rf dist",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
+    "prepublishOnly": "npm run test:ci && npm run lint",
     "lint": "eslint src tests --ext .ts,.js --ignore-pattern '**/fixtures/**' --ignore-pattern '**/tree-sitter-stable.js'",
     "lint:fix": "eslint src tests --ext .ts,.js --ignore-pattern '**/fixtures/**' --ignore-pattern '**/tree-sitter-stable.js' --fix",
     "format": "prettier --write \"src/**/*.{ts,js}\" \"tests/**/*.{ts,js}\"",
